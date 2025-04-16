@@ -16,7 +16,7 @@ jobs:
     needs: [pre-deploy]
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Run installation of dependencies commands
         run: npm install
 
@@ -29,7 +29,7 @@ jobs:
     needs: install-dependencies
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Run installation of dependencies commands
         run: npm install
       - name: Run audit
@@ -45,7 +45,7 @@ jobs:
     needs: install-dependencies
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk to check for vulnerabilities
@@ -62,7 +62,7 @@ jobs:
     needs: install-dependencies
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk Code Scan And Check Snyk Scan Results
@@ -77,7 +77,7 @@ jobs:
     needs: install-dependencies
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install Snyk CLI
         run: npm install -g snyk
       - name: Run Snyk Code Scan And Check Snyk Scan Results
@@ -95,10 +95,10 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v3
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -116,33 +116,33 @@ jobs:
       - name: Terraform apply
         run: terraform apply -auto-approve
 
-  terraform-wait:
-    needs: terraform-create
-    runs-on: ubuntu-latest
+  # terraform-wait:
+  #   needs: terraform-create
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Pause 2min to verify lambda creation and test
-        run: sleep 120
+  #   steps:
+  #     - name: Pause 2min to verify lambda creation and test
+  #       run: sleep 120
 
-  terraform-destroy:
-    needs: terraform-wait
-    runs-on: ubuntu-latest
+  # terraform-destroy:
+  #   needs: terraform-wait
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v4
       
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
+  #     - name: Set up Terraform
+  #       uses: hashicorp/setup-terraform@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+  #     - name: Configure AWS credentials
+  #       uses: aws-actions/configure-aws-credentials@v4
+  #       with:
+  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         aws-region: us-east-1
       
-      - name: Terraform init
-        run: terraform init
+  #     - name: Terraform init
+  #       run: terraform init
 
-      - name: Terraform destroy
-        run: terraform destroy -auto-approve
+  #     - name: Terraform destroy
+  #       run: terraform destroy -auto-approve

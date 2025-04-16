@@ -5,6 +5,9 @@ on:
  pull_request:
    branches:
      - main
+ push:
+   branches:
+     - dev
 
 jobs:
   Initial-Checks:
@@ -23,8 +26,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+       aws-region: "us-east-1"
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform init
+      id: init
+      run: terraform init
 
     - name: Terraform fmt
       id: fmt
@@ -53,14 +67,36 @@ jobs:
 
   ########################################
   # job name: snyk-checks
-  # Enable:
-  # - snyk code test
-  # - snyk test
-  # - snyk iac test
+  snyk-checks:
+    runs-on: ubuntu-latest
+    needs: Initial-Checks
+    outputs:
+      status: ${{ job.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Run Snyk Tests
+        run: |
+          snyk code test
+          snyk test
+          snyk iac test
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
   # - snyk container test <image-name>
-  # Also, enable:
-  # outputs:
-  #   status: ${{ job.status }}
+
   # for use in the summary
   ########################################
 
@@ -69,13 +105,13 @@ jobs:
   # Update needs statement to include snyk-checks #
   #################################################
   summary:
-    needs: [terraform-checks] # add snyk-checks 
+    needs: [terraform-checks, snyk-checks] # add snyk-checks 
     runs-on: ubuntu-latest
     steps:
       - name: Adding markdown
         run: |
           TF_STATUS=${{ needs.terraform-checks.outputs.status }}
-          # SNYK_STATUS=${{ needs.snyk-checks.outputs.status }}
+          SNYK_STATUS=${{ needs.snyk-checks.outputs.status }}
 
           echo '## 🚀 Preparing Build Summary 🚀' >> $GITHUB_STEP_SUMMARY
           echo '' >> $GITHUB_STEP_SUMMARY
@@ -87,3 +123,5 @@ jobs:
           echo '' >> $GITHUB_STEP_SUMMARY
 
           echo '## Job ran by: ${{ github.actor }}' >> $GITHUB_STEP_SUMMARY
+
+          

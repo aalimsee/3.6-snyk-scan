@@ -1,7 +1,7 @@
 {
   "name": "serverless-package-scan",
   "version": "1.0.0",
-  "description": "",
+  "description": "## What is package vulnerability scan?",
   "main": "index.js",
   "scripts": {
     "test": "jest"
@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/luqmannnn/serverless-package-scan/issues"
   },
-  "homepage": "https://github.com/luqmannnn/serverless-package-scan#readme"
+  "homepage": "https://github.com/luqmannnn/serverless-package-scan#readme",
+  "keywords": [],
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
