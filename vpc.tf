@@ -1,5 +1,6 @@
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.5.1" # Lock the version you want
 
   name = var.vpc_name
   cidr = "14.0.0.0/16"
