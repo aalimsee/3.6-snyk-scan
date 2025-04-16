@@ -1,4 +1,5 @@
 terraform {
+  required_version = ">= 1.5.0" # Warning - terraform "required_version" attribute is required (terraform_required_version)
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -16,4 +17,4 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# Missing provider version constraint
+
