@@ -9,6 +9,13 @@ data "aws_iam_policy_document" "inline_policy_cloudwatch" {
   }
 }
 
+# Warning: iam.tf:1:1: Warning - data "aws_iam_policy_document" "inline_policy_cloudwatch" is declared but not used (terraform_unused_declarations)
+resource "aws_iam_policy" "cloudwatch_policy" {
+  name   = "CloudWatchPolicy"
+  policy = data.aws_iam_policy_document.inline_policy_cloudwatch.json
+}
+
+
 data "aws_iam_policy_document" "assume_role" {
   statement {
     effect = "Allow"
