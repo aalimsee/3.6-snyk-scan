@@ -12,6 +12,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# Missing provider version constraint
 terraform {
   required_providers {
     archive = {
